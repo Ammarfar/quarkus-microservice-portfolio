@@ -3,6 +3,12 @@
 A production-oriented, event-driven checkout microservice built with Quarkus and Java 17.
 Implements idempotent Kafka consumer, transactional service layer, PostgreSQL persistence, and the Outbox pattern to guarantee reliable event publishing. Designed with clean layered architecture and observability.
 
+## Run Tutorial
+
+For a full end-to-end run guide (local and Docker modes), see:
+
+- [docs/end-to-end-tutorial.md](how-to-run.md)
+
 # 1) High Level Architecture
 
 ## Checkout Use-case (Business Flow)
