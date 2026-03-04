@@ -7,7 +7,8 @@ Implements idempotent Kafka consumer, transactional service layer, PostgreSQL pe
 
 For a full end-to-end run guide (local and Docker modes), see:
 
-- [docs/end-to-end-tutorial.md](how-to-run.md)
+- [docs/end-to-end-tutorial.md](docs/how-to-run.md)
+- [docs/kogito-checkout-bpmn.md](docs/kogito-checkout-bpmn.md)
 
 # 1) High Level Architecture
 

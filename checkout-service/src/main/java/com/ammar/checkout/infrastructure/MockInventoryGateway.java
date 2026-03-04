@@ -11,4 +11,9 @@ public class MockInventoryGateway implements InventoryGateway {
     public boolean reserve(CheckoutRequestedEvent event) {
         return true;
     }
+
+    @Override
+    public boolean release(CheckoutRequestedEvent event) {
+        return true;
+    }
 }
