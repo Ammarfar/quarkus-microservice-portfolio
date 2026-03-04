@@ -26,7 +26,7 @@ public class OutboxEventEntity {
     @Column(name = "event_type", nullable = false, length = 128)
     public String eventType;
 
-    @Column(name = "payload", nullable = false, columnDefinition = "jsonb")
+    @Column(name = "payload", nullable = false, columnDefinition = "text")
     public String payload;
 
     @Enumerated(EnumType.STRING)

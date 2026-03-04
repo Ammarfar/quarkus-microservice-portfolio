@@ -295,29 +295,3 @@ Services:
    → connection pool + timeout
 
 ---
-
----
-
-## Local Run (Infra Readiness)
-
-1. Start all services:
-
-```bash
-docker compose up -d
-```
-
-2. Validate readiness:
-
-- Quarkus app: `http://localhost:8080/q/health/live`
-- Quarkus readiness: `http://localhost:8080/q/health/ready`
-- Metrics: `http://localhost:8080/q/metrics`
-- Swagger UI: `http://localhost:8080/q/swagger-ui`
-- Kafka UI: `http://localhost:8090`
-- Prometheus: `http://localhost:9090`
-- Grafana: `http://localhost:3000` (admin/admin)
-
-3. Stop services:
-
-```bash
-docker compose down
-```

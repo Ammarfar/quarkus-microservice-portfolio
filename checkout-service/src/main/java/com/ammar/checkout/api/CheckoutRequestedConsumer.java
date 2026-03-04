@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.jboss.logging.Logger;
+import io.smallrye.reactive.messaging.annotations.Blocking;
 
 import java.util.concurrent.CompletionStage;
 
@@ -24,6 +25,7 @@ public class CheckoutRequestedConsumer {
     ObjectMapper objectMapper;
 
     @Incoming("checkout-requested")
+    @Blocking
     public CompletionStage<Void> consume(Message<String> message) {
         try {
             CheckoutRequestedEvent event = objectMapper.readValue(message.getPayload(), CheckoutRequestedEvent.class);
