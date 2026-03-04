@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" id="_5gwioPnBED6dB7uPyBlc6A" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd http://www.omg.org/spec/DD/20100524/DC DC.xsd http://www.omg.org/spec/DD/20100524/DI DI.xsd " exporter="jBPM Process Modeler" exporterVersion="2.0" targetNamespace="http://www.omg.org/bpmn20">
+  <bpmn2:itemDefinition id="_eventItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="_shouldProcessItem" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_inventoryReservedItem" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_processSuccessItem" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="Task_PublishCheckoutCompleted_InMessageType"/>
+  <bpmn2:itemDefinition id="Task_PublishCheckoutCompleted_OutMessageType"/>
+  <bpmn2:itemDefinition id="_Task_PublishCheckoutCompleted_eventInputXItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="Task_ProcessCheckout_InMessageType"/>
+  <bpmn2:itemDefinition id="Task_ProcessCheckout_OutMessageType"/>
+  <bpmn2:itemDefinition id="_Task_ProcessCheckout_eventInputXItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="_Task_ProcessCheckout_resultOutputXItem" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="Task_PublishCheckoutFailed_NoReserve_InMessageType"/>
+  <bpmn2:itemDefinition id="Task_PublishCheckoutFailed_NoReserve_OutMessageType"/>
+  <bpmn2:itemDefinition id="_Task_PublishCheckoutFailed_NoReserve_eventInputXItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="Task_ReserveInventory_InMessageType"/>
+  <bpmn2:itemDefinition id="Task_ReserveInventory_OutMessageType"/>
+  <bpmn2:itemDefinition id="_Task_ReserveInventory_eventInputXItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="_Task_ReserveInventory_resultOutputXItem" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="Task_PublishCheckoutFailed_Compensated_InMessageType"/>
+  <bpmn2:itemDefinition id="Task_PublishCheckoutFailed_Compensated_OutMessageType"/>
+  <bpmn2:itemDefinition id="_Task_PublishCheckoutFailed_Compensated_eventInputXItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="Task_ReleaseInventory_InMessageType"/>
+  <bpmn2:itemDefinition id="Task_ReleaseInventory_OutMessageType"/>
+  <bpmn2:itemDefinition id="_Task_ReleaseInventory_eventInputXItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="Task_ValidateRequest_InMessageType"/>
+  <bpmn2:itemDefinition id="Task_ValidateRequest_OutMessageType"/>
+  <bpmn2:itemDefinition id="_Task_ValidateRequest_eventInputXItem" structureRef="com.ammar.checkout.service.model.CheckoutRequestedEvent"/>
+  <bpmn2:itemDefinition id="_Task_ValidateRequest_resultOutputXItem" structureRef="Boolean"/>
+  <bpmn2:error id="CHECKOUT_PROCESS_FAILED" errorCode="CHECKOUT_PROCESS_FAILED"/>
+  <bpmn2:message id="Task_PublishCheckoutCompleted_InMessage" itemRef="Task_PublishCheckoutCompleted_InMessageType"/>
+  <bpmn2:message id="Task_PublishCheckoutCompleted_OutMessage" itemRef="Task_PublishCheckoutCompleted_OutMessageType"/>
+  <bpmn2:interface id="Task_PublishCheckoutCompleted_ServiceInterface" name="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" implementationRef="com.ammar.checkout.workflow.CheckoutSagaWorkflowService">
+    <bpmn2:operation id="Task_PublishCheckoutCompleted_ServiceOperation" name="publishCheckoutCompleted" implementationRef="publishCheckoutCompleted">
+      <bpmn2:inMessageRef>Task_PublishCheckoutCompleted_InMessage</bpmn2:inMessageRef>
+      <bpmn2:outMessageRef>Task_PublishCheckoutCompleted_OutMessage</bpmn2:outMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:message id="Task_ProcessCheckout_InMessage" itemRef="Task_ProcessCheckout_InMessageType"/>
+  <bpmn2:message id="Task_ProcessCheckout_OutMessage" itemRef="Task_ProcessCheckout_OutMessageType"/>
+  <bpmn2:interface id="Task_ProcessCheckout_ServiceInterface" name="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" implementationRef="com.ammar.checkout.workflow.CheckoutSagaWorkflowService">
+    <bpmn2:operation id="Task_ProcessCheckout_ServiceOperation" name="processCheckout" implementationRef="processCheckout">
+      <bpmn2:inMessageRef>Task_ProcessCheckout_InMessage</bpmn2:inMessageRef>
+      <bpmn2:outMessageRef>Task_ProcessCheckout_OutMessage</bpmn2:outMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:message id="Task_PublishCheckoutFailed_NoReserve_InMessage" itemRef="Task_PublishCheckoutFailed_NoReserve_InMessageType"/>
+  <bpmn2:message id="Task_PublishCheckoutFailed_NoReserve_OutMessage" itemRef="Task_PublishCheckoutFailed_NoReserve_OutMessageType"/>
+  <bpmn2:interface id="Task_PublishCheckoutFailed_NoReserve_ServiceInterface" name="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" implementationRef="com.ammar.checkout.workflow.CheckoutSagaWorkflowService">
+    <bpmn2:operation id="Task_PublishCheckoutFailed_NoReserve_ServiceOperation" name="publishCheckoutFailedNoReserve" implementationRef="publishCheckoutFailedNoReserve">
+      <bpmn2:inMessageRef>Task_PublishCheckoutFailed_NoReserve_InMessage</bpmn2:inMessageRef>
+      <bpmn2:outMessageRef>Task_PublishCheckoutFailed_NoReserve_OutMessage</bpmn2:outMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:message id="Task_ReserveInventory_InMessage" itemRef="Task_ReserveInventory_InMessageType"/>
+  <bpmn2:message id="Task_ReserveInventory_OutMessage" itemRef="Task_ReserveInventory_OutMessageType"/>
+  <bpmn2:interface id="Task_ReserveInventory_ServiceInterface" name="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" implementationRef="com.ammar.checkout.workflow.CheckoutSagaWorkflowService">
+    <bpmn2:operation id="Task_ReserveInventory_ServiceOperation" name="reserveInventory" implementationRef="reserveInventory">
+      <bpmn2:inMessageRef>Task_ReserveInventory_InMessage</bpmn2:inMessageRef>
+      <bpmn2:outMessageRef>Task_ReserveInventory_OutMessage</bpmn2:outMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:error id="CHECKOUT_PROCESS_FAILED" errorCode="CHECKOUT_PROCESS_FAILED"/>
+  <bpmn2:message id="Task_PublishCheckoutFailed_Compensated_InMessage" itemRef="Task_PublishCheckoutFailed_Compensated_InMessageType"/>
+  <bpmn2:message id="Task_PublishCheckoutFailed_Compensated_OutMessage" itemRef="Task_PublishCheckoutFailed_Compensated_OutMessageType"/>
+  <bpmn2:interface id="Task_PublishCheckoutFailed_Compensated_ServiceInterface" name="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" implementationRef="com.ammar.checkout.workflow.CheckoutSagaWorkflowService">
+    <bpmn2:operation id="Task_PublishCheckoutFailed_Compensated_ServiceOperation" name="publishCheckoutFailedCompensated" implementationRef="publishCheckoutFailedCompensated">
+      <bpmn2:inMessageRef>Task_PublishCheckoutFailed_Compensated_InMessage</bpmn2:inMessageRef>
+      <bpmn2:outMessageRef>Task_PublishCheckoutFailed_Compensated_OutMessage</bpmn2:outMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:message id="Task_ReleaseInventory_InMessage" itemRef="Task_ReleaseInventory_InMessageType"/>
+  <bpmn2:message id="Task_ReleaseInventory_OutMessage" itemRef="Task_ReleaseInventory_OutMessageType"/>
+  <bpmn2:interface id="Task_ReleaseInventory_ServiceInterface" name="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" implementationRef="com.ammar.checkout.workflow.CheckoutSagaWorkflowService">
+    <bpmn2:operation id="Task_ReleaseInventory_ServiceOperation" name="releaseInventory" implementationRef="releaseInventory">
+      <bpmn2:inMessageRef>Task_ReleaseInventory_InMessage</bpmn2:inMessageRef>
+      <bpmn2:outMessageRef>Task_ReleaseInventory_OutMessage</bpmn2:outMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:message id="Task_ValidateRequest_InMessage" itemRef="Task_ValidateRequest_InMessageType"/>
+  <bpmn2:message id="Task_ValidateRequest_OutMessage" itemRef="Task_ValidateRequest_OutMessageType"/>
+  <bpmn2:interface id="Task_ValidateRequest_ServiceInterface" name="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" implementationRef="com.ammar.checkout.workflow.CheckoutSagaWorkflowService">
+    <bpmn2:operation id="Task_ValidateRequest_ServiceOperation" name="validateRequestAndIdempotency" implementationRef="validateRequestAndIdempotency">
+      <bpmn2:inMessageRef>Task_ValidateRequest_InMessage</bpmn2:inMessageRef>
+      <bpmn2:outMessageRef>Task_ValidateRequest_OutMessage</bpmn2:outMessageRef>
+    </bpmn2:operation>
+  </bpmn2:interface>
+  <bpmn2:collaboration id="_5B98B698-BAA5-435B-9132-053E3D8D1617" name="Default Collaboration">
+    <bpmn2:participant id="_15BB4316-A52B-44C6-96B0-C7070A8FDC26" name="Pool Participant" processRef="checkoutMarketplaceSaga"/>
+  </bpmn2:collaboration>
+  <bpmn2:process id="checkoutMarketplaceSaga" drools:packageName="com.ammar.checkout" drools:version="1.0" drools:adHoc="false" name="Checkout Marketplace Saga" isExecutable="true" processType="Private">
+    <bpmn2:property id="event" itemSubjectRef="_eventItem" name="event"/>
+    <bpmn2:property id="shouldProcess" itemSubjectRef="_shouldProcessItem" name="shouldProcess"/>
+    <bpmn2:property id="inventoryReserved" itemSubjectRef="_inventoryReservedItem" name="inventoryReserved"/>
+    <bpmn2:property id="processSuccess" itemSubjectRef="_processSuccessItem" name="processSuccess"/>
+    <bpmn2:sequenceFlow id="SF_Main_1" sourceRef="Start_CheckoutRequested" targetRef="Task_ValidateRequest"/>
+    <bpmn2:sequenceFlow id="SF_Main_2" sourceRef="Task_ValidateRequest" targetRef="Gateway_ShouldProcess"/>
+    <bpmn2:sequenceFlow id="SF_Main_5" sourceRef="Throw_CompensateInventory" targetRef="Task_ReleaseInventory"/>
+    <bpmn2:sequenceFlow id="SF_Main_5B" sourceRef="Task_ReleaseInventory" targetRef="Task_PublishCheckoutFailed_Compensated"/>
+    <bpmn2:sequenceFlow id="SF_Main_2B" sourceRef="Gateway_ShouldProcess" targetRef="Gateway_Finish">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[shouldProcess == false]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SF_Main_7" sourceRef="Gateway_Finish" targetRef="End_CheckoutDone"/>
+    <bpmn2:sequenceFlow id="SF_Main_3" sourceRef="SubProcess_CheckoutSagaScope" targetRef="Gateway_Finish"/>
+    <bpmn2:sequenceFlow id="SF_Main_2A" sourceRef="Gateway_ShouldProcess" targetRef="SubProcess_CheckoutSagaScope">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[shouldProcess == true]]></bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SF_Main_4_Trigger" sourceRef="Boundary_ProcessFailed" targetRef="Throw_CompensateInventory"/>
+    <bpmn2:startEvent id="Start_CheckoutRequested" name="Checkout Requested">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Checkout Requested]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SF_Main_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:serviceTask id="Task_ValidateRequest" drools:serviceimplementation="Java" drools:serviceinterface="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" drools:serviceoperation="validateRequestAndIdempotency" name="Validate Request + Idempotency Check" implementation="Java" operationRef="Task_ValidateRequest_ServiceOperation">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Validate Request + Idempotency Check]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_1</bpmn2:incoming>
+      <bpmn2:outgoing>SF_Main_2</bpmn2:outgoing>
+      <bpmn2:ioSpecification>
+        <bpmn2:dataInput id="Task_ValidateRequest_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_ValidateRequest_eventInputXItem" name="event"/>
+        <bpmn2:dataOutput id="Task_ValidateRequest_resultOutputX" drools:dtype="Boolean" itemSubjectRef="_Task_ValidateRequest_resultOutputXItem" name="result"/>
+        <bpmn2:inputSet>
+          <bpmn2:dataInputRefs>Task_ValidateRequest_eventInputX</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+        <bpmn2:outputSet>
+          <bpmn2:dataOutputRefs>Task_ValidateRequest_resultOutputX</bpmn2:dataOutputRefs>
+        </bpmn2:outputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:sourceRef>event</bpmn2:sourceRef>
+        <bpmn2:targetRef>Task_ValidateRequest_eventInputX</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+      <bpmn2:dataOutputAssociation>
+        <bpmn2:sourceRef>Task_ValidateRequest_resultOutputX</bpmn2:sourceRef>
+        <bpmn2:targetRef>shouldProcess</bpmn2:targetRef>
+      </bpmn2:dataOutputAssociation>
+    </bpmn2:serviceTask>
+    <bpmn2:exclusiveGateway id="Gateway_ShouldProcess" name="Valid And Not Duplicated?" gatewayDirection="Diverging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Valid And Not Duplicated?]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_2</bpmn2:incoming>
+      <bpmn2:outgoing>SF_Main_2A</bpmn2:outgoing>
+      <bpmn2:outgoing>SF_Main_2B</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:intermediateThrowEvent id="Throw_CompensateInventory" name="Trigger Compensation">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Trigger Compensation]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_4_Trigger</bpmn2:incoming>
+      <bpmn2:outgoing>SF_Main_5</bpmn2:outgoing>
+      <bpmn2:compensateEventDefinition/>
+    </bpmn2:intermediateThrowEvent>
+    <bpmn2:serviceTask id="Task_ReleaseInventory" drools:serviceimplementation="Java" drools:serviceinterface="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" drools:serviceoperation="releaseInventory" name="Release Inventory (Compensation)" implementation="Java" operationRef="Task_ReleaseInventory_ServiceOperation">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Release Inventory (Compensation)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_5</bpmn2:incoming>
+      <bpmn2:outgoing>SF_Main_5B</bpmn2:outgoing>
+      <bpmn2:ioSpecification>
+        <bpmn2:dataInput id="Task_ReleaseInventory_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_ReleaseInventory_eventInputXItem" name="event"/>
+        <bpmn2:inputSet>
+          <bpmn2:dataInputRefs>Task_ReleaseInventory_eventInputX</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:sourceRef>event</bpmn2:sourceRef>
+        <bpmn2:targetRef>Task_ReleaseInventory_eventInputX</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="Task_PublishCheckoutFailed_Compensated" drools:serviceimplementation="Java" drools:serviceinterface="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" drools:serviceoperation="publishCheckoutFailedCompensated" name="Publish checkout.failed (compensated)" implementation="Java" operationRef="Task_PublishCheckoutFailed_Compensated_ServiceOperation">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Publish checkout.failed (compensated)]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_5B</bpmn2:incoming>
+      <bpmn2:ioSpecification>
+        <bpmn2:dataInput id="Task_PublishCheckoutFailed_Compensated_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_PublishCheckoutFailed_Compensated_eventInputXItem" name="event"/>
+        <bpmn2:inputSet>
+          <bpmn2:dataInputRefs>Task_PublishCheckoutFailed_Compensated_eventInputX</bpmn2:dataInputRefs>
+        </bpmn2:inputSet>
+      </bpmn2:ioSpecification>
+      <bpmn2:dataInputAssociation>
+        <bpmn2:sourceRef>event</bpmn2:sourceRef>
+        <bpmn2:targetRef>Task_PublishCheckoutFailed_Compensated_eventInputX</bpmn2:targetRef>
+      </bpmn2:dataInputAssociation>
+    </bpmn2:serviceTask>
+    <bpmn2:exclusiveGateway id="Gateway_Finish" name="Finish" gatewayDirection="Converging">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Finish]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_3</bpmn2:incoming>
+      <bpmn2:incoming>SF_Main_2B</bpmn2:incoming>
+      <bpmn2:outgoing>SF_Main_7</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:endEvent id="End_CheckoutDone" name="Checkout Finished">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Checkout Finished]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_7</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:subProcess id="SubProcess_CheckoutSagaScope" name="Checkout Saga Scope">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Checkout Saga Scope]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SF_Main_2A</bpmn2:incoming>
+      <bpmn2:outgoing>SF_Main_3</bpmn2:outgoing>
+      <bpmn2:sequenceFlow id="SF_Sub_1" sourceRef="SubStart" targetRef="Task_ReserveInventory"/>
+      <bpmn2:sequenceFlow id="SF_Sub_2" sourceRef="Task_ReserveInventory" targetRef="Gateway_InventoryReserved"/>
+      <bpmn2:sequenceFlow id="SF_Sub_4" sourceRef="Gateway_InventoryReserved" targetRef="Task_PublishCheckoutFailed_NoReserve">
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[inventoryReserved == false]]></bpmn2:conditionExpression>
+      </bpmn2:sequenceFlow>
+      <bpmn2:sequenceFlow id="SF_Sub_3" sourceRef="Gateway_InventoryReserved" targetRef="Task_ProcessCheckout">
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[inventoryReserved == true]]></bpmn2:conditionExpression>
+      </bpmn2:sequenceFlow>
+      <bpmn2:sequenceFlow id="SF_Sub_6" sourceRef="Task_ProcessCheckout" targetRef="Gateway_ProcessSuccess"/>
+      <bpmn2:sequenceFlow id="SF_Sub_7" sourceRef="Gateway_ProcessSuccess" targetRef="Task_PublishCheckoutCompleted">
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[processSuccess == true]]></bpmn2:conditionExpression>
+      </bpmn2:sequenceFlow>
+      <bpmn2:sequenceFlow id="SF_Sub_9" sourceRef="Gateway_ProcessSuccess" targetRef="End_ErrorProcessFailed">
+        <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[processSuccess == false]]></bpmn2:conditionExpression>
+      </bpmn2:sequenceFlow>
+      <bpmn2:sequenceFlow id="SF_Sub_8" sourceRef="Task_PublishCheckoutCompleted" targetRef="SubEnd_Success"/>
+      <bpmn2:sequenceFlow id="SF_Sub_5" sourceRef="Task_PublishCheckoutFailed_NoReserve" targetRef="SubEnd_FailedNoReserve"/>
+      <bpmn2:startEvent id="SubStart">
+        <bpmn2:outgoing>SF_Sub_1</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:serviceTask id="Task_ReserveInventory" drools:serviceimplementation="Java" drools:serviceinterface="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" drools:serviceoperation="reserveInventory" name="Reserve Inventory" implementation="Java" operationRef="Task_ReserveInventory_ServiceOperation">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Reserve Inventory]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_1</bpmn2:incoming>
+        <bpmn2:outgoing>SF_Sub_2</bpmn2:outgoing>
+        <bpmn2:ioSpecification>
+          <bpmn2:dataInput id="Task_ReserveInventory_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_ReserveInventory_eventInputXItem" name="event"/>
+          <bpmn2:dataOutput id="Task_ReserveInventory_resultOutputX" drools:dtype="Boolean" itemSubjectRef="_Task_ReserveInventory_resultOutputXItem" name="result"/>
+          <bpmn2:inputSet>
+            <bpmn2:dataInputRefs>Task_ReserveInventory_eventInputX</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+          <bpmn2:outputSet>
+            <bpmn2:dataOutputRefs>Task_ReserveInventory_resultOutputX</bpmn2:dataOutputRefs>
+          </bpmn2:outputSet>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation>
+          <bpmn2:sourceRef>event</bpmn2:sourceRef>
+          <bpmn2:targetRef>Task_ReserveInventory_eventInputX</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataOutputAssociation>
+          <bpmn2:sourceRef>Task_ReserveInventory_resultOutputX</bpmn2:sourceRef>
+          <bpmn2:targetRef>inventoryReserved</bpmn2:targetRef>
+        </bpmn2:dataOutputAssociation>
+      </bpmn2:serviceTask>
+      <bpmn2:exclusiveGateway id="Gateway_InventoryReserved" name="Inventory Reserved?" gatewayDirection="Diverging">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Inventory Reserved?]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_2</bpmn2:incoming>
+        <bpmn2:outgoing>SF_Sub_3</bpmn2:outgoing>
+        <bpmn2:outgoing>SF_Sub_4</bpmn2:outgoing>
+      </bpmn2:exclusiveGateway>
+      <bpmn2:serviceTask id="Task_PublishCheckoutFailed_NoReserve" drools:serviceimplementation="Java" drools:serviceinterface="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" drools:serviceoperation="publishCheckoutFailedNoReserve" name="Publish checkout.failed (reserve failed)" implementation="Java" operationRef="Task_PublishCheckoutFailed_NoReserve_ServiceOperation">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Publish checkout.failed (reserve failed)]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_4</bpmn2:incoming>
+        <bpmn2:outgoing>SF_Sub_5</bpmn2:outgoing>
+        <bpmn2:ioSpecification>
+          <bpmn2:dataInput id="Task_PublishCheckoutFailed_NoReserve_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_PublishCheckoutFailed_NoReserve_eventInputXItem" name="event"/>
+          <bpmn2:inputSet>
+            <bpmn2:dataInputRefs>Task_PublishCheckoutFailed_NoReserve_eventInputX</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation>
+          <bpmn2:sourceRef>event</bpmn2:sourceRef>
+          <bpmn2:targetRef>Task_PublishCheckoutFailed_NoReserve_eventInputX</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+      </bpmn2:serviceTask>
+      <bpmn2:serviceTask id="Task_ProcessCheckout" drools:serviceimplementation="Java" drools:serviceinterface="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" drools:serviceoperation="processCheckout" name="Process Checkout (DB + Outbox)" implementation="Java" operationRef="Task_ProcessCheckout_ServiceOperation">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Process Checkout (DB + Outbox)]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_3</bpmn2:incoming>
+        <bpmn2:outgoing>SF_Sub_6</bpmn2:outgoing>
+        <bpmn2:ioSpecification>
+          <bpmn2:dataInput id="Task_ProcessCheckout_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_ProcessCheckout_eventInputXItem" name="event"/>
+          <bpmn2:dataOutput id="Task_ProcessCheckout_resultOutputX" drools:dtype="Boolean" itemSubjectRef="_Task_ProcessCheckout_resultOutputXItem" name="result"/>
+          <bpmn2:inputSet>
+            <bpmn2:dataInputRefs>Task_ProcessCheckout_eventInputX</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+          <bpmn2:outputSet>
+            <bpmn2:dataOutputRefs>Task_ProcessCheckout_resultOutputX</bpmn2:dataOutputRefs>
+          </bpmn2:outputSet>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation>
+          <bpmn2:sourceRef>event</bpmn2:sourceRef>
+          <bpmn2:targetRef>Task_ProcessCheckout_eventInputX</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+        <bpmn2:dataOutputAssociation>
+          <bpmn2:sourceRef>Task_ProcessCheckout_resultOutputX</bpmn2:sourceRef>
+          <bpmn2:targetRef>processSuccess</bpmn2:targetRef>
+        </bpmn2:dataOutputAssociation>
+      </bpmn2:serviceTask>
+      <bpmn2:exclusiveGateway id="Gateway_ProcessSuccess" name="Process Success?" gatewayDirection="Diverging">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Process Success?]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_6</bpmn2:incoming>
+        <bpmn2:outgoing>SF_Sub_9</bpmn2:outgoing>
+        <bpmn2:outgoing>SF_Sub_7</bpmn2:outgoing>
+      </bpmn2:exclusiveGateway>
+      <bpmn2:serviceTask id="Task_PublishCheckoutCompleted" drools:serviceimplementation="Java" drools:serviceinterface="com.ammar.checkout.workflow.CheckoutSagaWorkflowService" drools:serviceoperation="publishCheckoutCompleted" name="Publish checkout.completed" implementation="Java" operationRef="Task_PublishCheckoutCompleted_ServiceOperation">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Publish checkout.completed]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_7</bpmn2:incoming>
+        <bpmn2:outgoing>SF_Sub_8</bpmn2:outgoing>
+        <bpmn2:ioSpecification>
+          <bpmn2:dataInput id="Task_PublishCheckoutCompleted_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_PublishCheckoutCompleted_eventInputXItem" name="event"/>
+          <bpmn2:inputSet>
+            <bpmn2:dataInputRefs>Task_PublishCheckoutCompleted_eventInputX</bpmn2:dataInputRefs>
+          </bpmn2:inputSet>
+        </bpmn2:ioSpecification>
+        <bpmn2:dataInputAssociation>
+          <bpmn2:sourceRef>event</bpmn2:sourceRef>
+          <bpmn2:targetRef>Task_PublishCheckoutCompleted_eventInputX</bpmn2:targetRef>
+        </bpmn2:dataInputAssociation>
+      </bpmn2:serviceTask>
+      <bpmn2:endEvent id="End_ErrorProcessFailed" name="Process Failed">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Process Failed]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_9</bpmn2:incoming>
+        <bpmn2:errorEventDefinition drools:erefname="CHECKOUT_PROCESS_FAILED" errorRef="CHECKOUT_PROCESS_FAILED"/>
+      </bpmn2:endEvent>
+      <bpmn2:endEvent id="SubEnd_Success" name="Subprocess Success">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Subprocess Success]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_8</bpmn2:incoming>
+      </bpmn2:endEvent>
+      <bpmn2:endEvent id="SubEnd_FailedNoReserve" name="Subprocess Failed (No Reserve)">
+        <bpmn2:extensionElements>
+          <drools:metaData name="elementname">
+            <drools:metaValue><![CDATA[Subprocess Failed (No Reserve)]]></drools:metaValue>
+          </drools:metaData>
+        </bpmn2:extensionElements>
+        <bpmn2:incoming>SF_Sub_5</bpmn2:incoming>
+      </bpmn2:endEvent>
+    </bpmn2:subProcess>
+    <bpmn2:boundaryEvent id="Boundary_ProcessFailed" drools:dockerinfo="490^364|" drools:boundaryca="true" name="Process Failed Handler" attachedToRef="SubProcess_CheckoutSagaScope">
+      <bpmn2:extensionElements>
+        <drools:metaData name="elementname">
+          <drools:metaValue><![CDATA[Process Failed Handler]]></drools:metaValue>
+        </drools:metaData>
+      </bpmn2:extensionElements>
+      <bpmn2:outgoing>SF_Main_4_Trigger</bpmn2:outgoing>
+      <bpmn2:errorEventDefinition drools:erefname="CHECKOUT_PROCESS_FAILED" errorRef="CHECKOUT_PROCESS_FAILED"/>
+    </bpmn2:boundaryEvent>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram>
+    <bpmndi:BPMNPlane bpmnElement="checkoutMarketplaceSaga">
+      <bpmndi:BPMNShape id="shape_SubProcess_CheckoutSagaScope" bpmnElement="SubProcess_CheckoutSagaScope" isExpanded="true">
+        <dc:Bounds height="400" width="1020" x="490" y="70"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_SubEnd_FailedNoReserve" bpmnElement="SubEnd_FailedNoReserve">
+        <dc:Bounds height="56" width="56" x="1260" y="102"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_SubEnd_Success" bpmnElement="SubEnd_Success">
+        <dc:Bounds height="56" width="56" x="1570" y="171"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_End_ErrorProcessFailed" bpmnElement="End_ErrorProcessFailed">
+        <dc:Bounds height="56" width="56" x="1317" y="330"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Task_PublishCheckoutCompleted" bpmnElement="Task_PublishCheckoutCompleted">
+        <dc:Bounds height="80" width="190" x="1300" y="210"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Gateway_ProcessSuccess" bpmnElement="Gateway_ProcessSuccess">
+        <dc:Bounds height="56" width="56" x="1207" y="222"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Task_ProcessCheckout" bpmnElement="Task_ProcessCheckout">
+        <dc:Bounds height="80" width="220" x="940" y="210"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Task_PublishCheckoutFailed_NoReserve" bpmnElement="Task_PublishCheckoutFailed_NoReserve">
+        <dc:Bounds height="80" width="270" x="940" y="90"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Gateway_InventoryReserved" bpmnElement="Gateway_InventoryReserved">
+        <dc:Bounds height="56" width="56" x="837" y="222"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Task_ReserveInventory" bpmnElement="Task_ReserveInventory">
+        <dc:Bounds height="80" width="170" x="620" y="210"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_SubStart" bpmnElement="SubStart">
+        <dc:Bounds height="56" width="56" x="517" y="222"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge_shape_Task_PublishCheckoutFailed_NoReserve_to_shape_SubEnd_FailedNoReserve" bpmnElement="SF_Sub_5">
+        <di:waypoint x="1210" y="130"/>
+        <di:waypoint x="1260" y="120"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Task_PublishCheckoutCompleted_to_shape_SubEnd_Success" bpmnElement="SF_Sub_8">
+        <di:waypoint x="1490" y="250"/>
+        <di:waypoint x="1570" y="189"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Gateway_ProcessSuccess_to_shape_End_ErrorProcessFailed" bpmnElement="SF_Sub_9">
+        <di:waypoint x="1232" y="272"/>
+        <di:waypoint x="1235" y="358"/>
+        <di:waypoint x="1317" y="348"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Gateway_ProcessSuccess_to_shape_Task_PublishCheckoutCompleted" bpmnElement="SF_Sub_7">
+        <di:waypoint x="1257" y="247"/>
+        <di:waypoint x="1300" y="250"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Task_ProcessCheckout_to_shape_Gateway_ProcessSuccess" bpmnElement="SF_Sub_6">
+        <di:waypoint x="1160" y="250"/>
+        <di:waypoint x="1207" y="247"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Gateway_InventoryReserved_to_shape_Task_ProcessCheckout" bpmnElement="SF_Sub_3">
+        <di:waypoint x="887" y="247"/>
+        <di:waypoint x="940" y="250"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Gateway_InventoryReserved_to_shape_Task_PublishCheckoutFailed_NoReserve" bpmnElement="SF_Sub_4">
+        <di:waypoint x="862" y="222"/>
+        <di:waypoint x="865" y="130"/>
+        <di:waypoint x="940" y="130"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Task_ReserveInventory_to_shape_Gateway_InventoryReserved" bpmnElement="SF_Sub_2">
+        <di:waypoint x="790" y="250"/>
+        <di:waypoint x="837" y="247"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_SubStart_to_shape_Task_ReserveInventory" bpmnElement="SF_Sub_1">
+        <di:waypoint x="553" y="240"/>
+        <di:waypoint x="620" y="250"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="shape_Boundary_ProcessFailed" bpmnElement="Boundary_ProcessFailed">
+        <dc:Bounds height="56" width="56" x="980" y="434"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_End_CheckoutDone" bpmnElement="End_CheckoutDone">
+        <dc:Bounds height="56" width="56" x="2263" y="248"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Gateway_Finish" bpmnElement="Gateway_Finish">
+        <dc:Bounds height="56" width="56" x="2137" y="248"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Task_PublishCheckoutFailed_Compensated" bpmnElement="Task_PublishCheckoutFailed_Compensated">
+        <dc:Bounds height="80" width="230" x="1880" y="322"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Task_ReleaseInventory" bpmnElement="Task_ReleaseInventory">
+        <dc:Bounds height="80" width="210" x="1626" y="322"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Throw_CompensateInventory" bpmnElement="Throw_CompensateInventory">
+        <dc:Bounds height="56" width="56" x="1527" y="334"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Gateway_ShouldProcess" bpmnElement="Gateway_ShouldProcess">
+        <dc:Bounds height="56" width="56" x="392" y="242"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Task_ValidateRequest" bpmnElement="Task_ValidateRequest">
+        <dc:Bounds height="80" width="200" x="150" y="230"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="shape_Start_CheckoutRequested" bpmnElement="Start_CheckoutRequested">
+        <dc:Bounds height="56" width="56" x="54" y="242"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="edge_shape_Boundary_ProcessFailed_to_shape_Throw_CompensateInventory" bpmnElement="SF_Main_4_Trigger">
+        <di:waypoint x="998" y="452"/>
+        <di:waypoint x="1555" y="470"/>
+        <di:waypoint x="1545" y="370"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Gateway_ShouldProcess_to_shape_SubProcess_CheckoutSagaScope" bpmnElement="SF_Main_2A">
+        <di:waypoint x="442" y="267"/>
+        <di:waypoint x="490" y="250"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_SubProcess_CheckoutSagaScope_to_shape_Gateway_Finish" bpmnElement="SF_Main_3">
+        <di:waypoint x="1510" y="250"/>
+        <di:waypoint x="2137" y="273"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Gateway_Finish_to_shape_End_CheckoutDone" bpmnElement="SF_Main_7">
+        <di:waypoint x="2187" y="273"/>
+        <di:waypoint x="2263" y="266"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Gateway_ShouldProcess_to_shape_Gateway_Finish" bpmnElement="SF_Main_2B">
+        <di:waypoint x="417" y="292"/>
+        <di:waypoint x="420" y="500"/>
+        <di:waypoint x="2165" y="500"/>
+        <di:waypoint x="2162" y="298"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Task_ReleaseInventory_to_shape_Task_PublishCheckoutFailed_Compensated" bpmnElement="SF_Main_5B">
+        <di:waypoint x="1836" y="362"/>
+        <di:waypoint x="1880" y="362"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Throw_CompensateInventory_to_shape_Task_ReleaseInventory" bpmnElement="SF_Main_5">
+        <di:waypoint x="1563" y="352"/>
+        <di:waypoint x="1626" y="362"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Task_ValidateRequest_to_shape_Gateway_ShouldProcess" bpmnElement="SF_Main_2">
+        <di:waypoint x="350" y="270"/>
+        <di:waypoint x="392" y="267"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Start_CheckoutRequested_to_shape_Task_ValidateRequest" bpmnElement="SF_Main_1">
+        <di:waypoint x="90" y="260"/>
+        <di:waypoint x="150" y="270"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmn2:relationship type="BPSimData">
+    <bpmn2:extensionElements>
+      <bpsim:BPSimData>
+        <bpsim:Scenario id="default" name="Simulationscenario">
+          <bpsim:ScenarioParameters/>
+          <bpsim:ElementParameters elementRef="Task_PublishCheckoutFailed_Compensated">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="Task_ReleaseInventory">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="Task_ValidateRequest">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+            <bpsim:ResourceParameters>
+              <bpsim:Availability>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Availability>
+              <bpsim:Quantity>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:Quantity>
+            </bpsim:ResourceParameters>
+            <bpsim:CostParameters>
+              <bpsim:UnitCost>
+                <bpsim:FloatingParameter value="0"/>
+              </bpsim:UnitCost>
+            </bpsim:CostParameters>
+          </bpsim:ElementParameters>
+          <bpsim:ElementParameters elementRef="Start_CheckoutRequested">
+            <bpsim:TimeParameters>
+              <bpsim:ProcessingTime>
+                <bpsim:NormalDistribution mean="0" standardDeviation="0"/>
+              </bpsim:ProcessingTime>
+            </bpsim:TimeParameters>
+          </bpsim:ElementParameters>
+        </bpsim:Scenario>
+      </bpsim:BPSimData>
+    </bpmn2:extensionElements>
+    <bpmn2:source>_5gwioPnBED6dB7uPyBlc6A</bpmn2:source>
+    <bpmn2:target>_5gwioPnBED6dB7uPyBlc6A</bpmn2:target>
+  </bpmn2:relationship>
+</bpmn2:definitions>

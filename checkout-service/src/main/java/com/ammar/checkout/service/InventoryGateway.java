@@ -5,4 +5,6 @@ import com.ammar.checkout.service.model.CheckoutRequestedEvent;
 public interface InventoryGateway {
 
     boolean reserve(CheckoutRequestedEvent event);
+
+    boolean release(CheckoutRequestedEvent event);
 }

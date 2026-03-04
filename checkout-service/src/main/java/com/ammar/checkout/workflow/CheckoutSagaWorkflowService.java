@@ -1,4 +1,4 @@
-package com.ammar.checkout.service;
+package com.ammar.checkout.workflow;
 
 import com.ammar.checkout.entity.CheckoutEntity;
 import com.ammar.checkout.entity.OutboxEventEntity;
@@ -8,8 +8,9 @@ import com.ammar.checkout.exception.BusinessValidationException;
 import com.ammar.checkout.repository.CheckoutRepository;
 import com.ammar.checkout.repository.OutboxRepository;
 import com.ammar.checkout.repository.ProcessedEventRepository;
+import com.ammar.checkout.service.CheckoutValidator;
+import com.ammar.checkout.service.InventoryGateway;
 import com.ammar.checkout.service.model.CheckoutRequestedEvent;
-import com.ammar.checkout.service.model.CheckoutResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -22,7 +23,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @ApplicationScoped
-public class CheckoutProcessingService {
+public class CheckoutSagaWorkflowService {
 
     @Inject
     ProcessedEventRepository processedEventRepository;
@@ -40,59 +41,82 @@ public class CheckoutProcessingService {
     ObjectMapper objectMapper;
 
     @Transactional
-    public CheckoutResult process(CheckoutRequestedEvent event) throws Exception {
+    public boolean validateRequestAndIdempotency(CheckoutRequestedEvent event) throws Exception {
         UUID eventId = parseEventId(event.eventId());
         if (processedEventRepository.exists(eventId)) {
-            return new CheckoutResult(eventId, event.orderId(), "DUPLICATE", true, null);
+            return false;
         }
 
-        boolean inventoryReserved = false;
         try {
             CheckoutValidator.validate(event);
+            return true;
+        } catch (BusinessValidationException exception) {
+            persistFailure(eventId, event.orderId(), exception.getMessage());
+            return false;
+        }
+    }
 
-            inventoryReserved = inventoryGateway.reserve(event);
-            if (!inventoryReserved) {
-                persistFailure(eventId, event.orderId(), "inventory reservation failed");
-                return new CheckoutResult(eventId, event.orderId(), "FAILED", false, "inventory reservation failed");
-            }
+    public boolean reserveInventory(CheckoutRequestedEvent event) {
+        try {
+            return inventoryGateway.reserve(event);
+        } catch (Exception exception) {
+            return false;
+        }
+    }
 
-            BigDecimal total = calculateTotal(event);
-
+    @Transactional
+    public boolean processCheckout(CheckoutRequestedEvent event) {
+        try {
             CheckoutEntity checkout = new CheckoutEntity();
             checkout.id = UUID.randomUUID();
             checkout.orderId = event.orderId();
-            checkout.totalAmount = total;
+            checkout.totalAmount = calculateTotal(event);
             checkout.createdAt = Instant.now();
             checkoutRepository.persist(checkout);
-
-            persistProcessed(eventId);
-            persistOutbox("order.checkout.completed", event.orderId(), createSuccessPayload(eventId, checkout, event));
-
-            return new CheckoutResult(eventId, event.orderId(), "COMPLETED", false, null);
-        } catch (BusinessValidationException exception) {
-            persistFailure(eventId, event.orderId(), exception.getMessage());
-            return new CheckoutResult(eventId, event.orderId(), "FAILED", false, exception.getMessage());
+            return true;
         } catch (Exception exception) {
-            String reason = safeMessage(exception);
-
-            if (inventoryReserved) {
-                boolean released = false;
-                try {
-                    released = inventoryGateway.release(event);
-                } catch (Exception releaseException) {
-                    reason = reason + "; compensation release failed: " + safeMessage(releaseException);
-                }
-
-                String compensationReason = released
-                    ? "checkout failed after reserve, compensation release succeeded: " + reason
-                    : "checkout failed after reserve, compensation release failed: " + reason;
-                persistFailure(eventId, event.orderId(), compensationReason);
-                return new CheckoutResult(eventId, event.orderId(), "FAILED", false, compensationReason);
-            }
-
-            persistFailure(eventId, event.orderId(), reason);
-            return new CheckoutResult(eventId, event.orderId(), "FAILED", false, reason);
+            return false;
         }
+    }
+
+    @Transactional
+    public void publishCheckoutCompleted(CheckoutRequestedEvent event) throws Exception {
+        UUID eventId = parseEventId(event.eventId());
+        persistProcessed(eventId);
+
+        CheckoutEntity checkout = checkoutRepository.find("orderId", event.orderId())
+            .firstResult();
+
+        if (checkout == null) {
+            checkout = new CheckoutEntity();
+            checkout.id = UUID.randomUUID();
+            checkout.orderId = event.orderId();
+            checkout.totalAmount = calculateTotal(event);
+            checkout.createdAt = Instant.now();
+            checkoutRepository.persist(checkout);
+        }
+
+        persistOutbox("order.checkout.completed", event.orderId(), createSuccessPayload(eventId, checkout, event));
+    }
+
+    @Transactional
+    public void publishCheckoutFailedNoReserve(CheckoutRequestedEvent event) throws Exception {
+        UUID eventId = parseEventId(event.eventId());
+        persistFailure(eventId, event.orderId(), "inventory reservation failed");
+    }
+
+    public void releaseInventory(CheckoutRequestedEvent event) {
+        try {
+            inventoryGateway.release(event);
+        } catch (Exception ignored) {
+            // Failure will be represented by the failure event emitted after compensation attempt.
+        }
+    }
+
+    @Transactional
+    public void publishCheckoutFailedCompensated(CheckoutRequestedEvent event) throws Exception {
+        UUID eventId = parseEventId(event.eventId());
+        persistFailure(eventId, event.orderId(), "checkout failed after reserve, compensation attempted");
     }
 
     private UUID parseEventId(String eventId) {
@@ -122,13 +146,6 @@ public class CheckoutProcessingService {
         processedEvent.eventId = eventId;
         processedEvent.processedAt = Instant.now();
         processedEventRepository.persist(processedEvent);
-    }
-
-    private String safeMessage(Exception exception) {
-        if (exception.getMessage() == null || exception.getMessage().isBlank()) {
-            return "unexpected processing error";
-        }
-        return exception.getMessage();
     }
 
     private void persistOutbox(String eventType, String aggregateId, String payload) {
