@@ -70,7 +70,10 @@ services:
     volumes:
       - ./:/workspace
       - maven-cache:/root/.m2
-    command: ["mvn", "quarkus:dev", "-Dquarkus.http.host=0.0.0.0"]
+    command:
+      - /bin/sh
+      - -lc
+      - mvn -DskipTests clean package && java -Dquarkus.http.host=0.0.0.0 -jar target/quarkus-app/quarkus-run.jar
     ports:
       - "8080:8080"
 
