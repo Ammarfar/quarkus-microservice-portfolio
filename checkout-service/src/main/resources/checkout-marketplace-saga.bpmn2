@@ -101,6 +101,7 @@
     <bpmn2:sequenceFlow id="SF_Main_2B" sourceRef="Gateway_ShouldProcess" targetRef="Gateway_Finish">
       <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.java.com/java"><![CDATA[shouldProcess == false]]></bpmn2:conditionExpression>
     </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SF_Main_6" sourceRef="Task_PublishCheckoutFailed_Compensated" targetRef="Gateway_Finish"/>
     <bpmn2:sequenceFlow id="SF_Main_7" sourceRef="Gateway_Finish" targetRef="End_CheckoutDone"/>
     <bpmn2:sequenceFlow id="SF_Main_3" sourceRef="SubProcess_CheckoutSagaScope" targetRef="Gateway_Finish"/>
     <bpmn2:sequenceFlow id="SF_Main_2A" sourceRef="Gateway_ShouldProcess" targetRef="SubProcess_CheckoutSagaScope">
@@ -188,6 +189,7 @@
         </drools:metaData>
       </bpmn2:extensionElements>
       <bpmn2:incoming>SF_Main_5B</bpmn2:incoming>
+      <bpmn2:outgoing>SF_Main_6</bpmn2:outgoing>
       <bpmn2:ioSpecification>
         <bpmn2:dataInput id="Task_PublishCheckoutFailed_Compensated_eventInputX" drools:dtype="com.ammar.checkout.service.model.CheckoutRequestedEvent" itemSubjectRef="_Task_PublishCheckoutFailed_Compensated_eventInputXItem" name="event"/>
         <bpmn2:inputSet>
@@ -207,6 +209,7 @@
       </bpmn2:extensionElements>
       <bpmn2:incoming>SF_Main_3</bpmn2:incoming>
       <bpmn2:incoming>SF_Main_2B</bpmn2:incoming>
+      <bpmn2:incoming>SF_Main_6</bpmn2:incoming>
       <bpmn2:outgoing>SF_Main_7</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
     <bpmn2:endEvent id="End_CheckoutDone" name="Checkout Finished">
@@ -430,27 +433,28 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="edge_shape_Task_PublishCheckoutFailed_NoReserve_to_shape_SubEnd_FailedNoReserve" bpmnElement="SF_Sub_5">
         <di:waypoint x="1210" y="130"/>
-        <di:waypoint x="1260" y="120"/>
+        <di:waypoint x="1260" y="130"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Task_PublishCheckoutCompleted_to_shape_SubEnd_Success" bpmnElement="SF_Sub_8">
         <di:waypoint x="1490" y="250"/>
-        <di:waypoint x="1570" y="189"/>
+        <di:waypoint x="1598" y="250"/>
+        <di:waypoint x="1598" y="199"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Gateway_ProcessSuccess_to_shape_End_ErrorProcessFailed" bpmnElement="SF_Sub_9">
-        <di:waypoint x="1232" y="272"/>
+        <di:waypoint x="1235" y="278"/>
         <di:waypoint x="1235" y="358"/>
-        <di:waypoint x="1317" y="348"/>
+        <di:waypoint x="1317" y="358"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Gateway_ProcessSuccess_to_shape_Task_PublishCheckoutCompleted" bpmnElement="SF_Sub_7">
-        <di:waypoint x="1257" y="247"/>
+        <di:waypoint x="1263" y="250"/>
         <di:waypoint x="1300" y="250"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Task_ProcessCheckout_to_shape_Gateway_ProcessSuccess" bpmnElement="SF_Sub_6">
         <di:waypoint x="1160" y="250"/>
-        <di:waypoint x="1207" y="247"/>
+        <di:waypoint x="1207" y="250"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Gateway_InventoryReserved_to_shape_Task_ProcessCheckout" bpmnElement="SF_Sub_3">
-        <di:waypoint x="887" y="247"/>
+        <di:waypoint x="893" y="250"/>
         <di:waypoint x="940" y="250"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Gateway_InventoryReserved_to_shape_Task_PublishCheckoutFailed_NoReserve" bpmnElement="SF_Sub_4">
@@ -460,10 +464,10 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Task_ReserveInventory_to_shape_Gateway_InventoryReserved" bpmnElement="SF_Sub_2">
         <di:waypoint x="790" y="250"/>
-        <di:waypoint x="837" y="247"/>
+        <di:waypoint x="837" y="250"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_SubStart_to_shape_Task_ReserveInventory" bpmnElement="SF_Sub_1">
-        <di:waypoint x="553" y="240"/>
+        <di:waypoint x="573" y="250"/>
         <di:waypoint x="620" y="250"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="shape_Boundary_ProcessFailed" bpmnElement="Boundary_ProcessFailed">
@@ -494,42 +498,47 @@
         <dc:Bounds height="56" width="56" x="54" y="242"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="edge_shape_Boundary_ProcessFailed_to_shape_Throw_CompensateInventory" bpmnElement="SF_Main_4_Trigger">
-        <di:waypoint x="998" y="452"/>
-        <di:waypoint x="1555" y="470"/>
-        <di:waypoint x="1545" y="370"/>
+        <di:waypoint x="1008" y="462"/>
+        <di:waypoint x="1008" y="362"/>
+        <di:waypoint x="1527" y="362"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Gateway_ShouldProcess_to_shape_SubProcess_CheckoutSagaScope" bpmnElement="SF_Main_2A">
-        <di:waypoint x="442" y="267"/>
-        <di:waypoint x="490" y="250"/>
+        <di:waypoint x="448" y="270"/>
+        <di:waypoint x="490" y="270"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_SubProcess_CheckoutSagaScope_to_shape_Gateway_Finish" bpmnElement="SF_Main_3">
-        <di:waypoint x="1510" y="250"/>
-        <di:waypoint x="2137" y="273"/>
+        <di:waypoint x="1510" y="276"/>
+        <di:waypoint x="2137" y="276"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Gateway_Finish_to_shape_End_CheckoutDone" bpmnElement="SF_Main_7">
-        <di:waypoint x="2187" y="273"/>
-        <di:waypoint x="2263" y="266"/>
+        <di:waypoint x="2193" y="276"/>
+        <di:waypoint x="2263" y="276"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Gateway_ShouldProcess_to_shape_Gateway_Finish" bpmnElement="SF_Main_2B">
-        <di:waypoint x="417" y="292"/>
+        <di:waypoint x="420" y="298"/>
         <di:waypoint x="420" y="500"/>
         <di:waypoint x="2165" y="500"/>
-        <di:waypoint x="2162" y="298"/>
+        <di:waypoint x="2165" y="304"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Task_ReleaseInventory_to_shape_Task_PublishCheckoutFailed_Compensated" bpmnElement="SF_Main_5B">
         <di:waypoint x="1836" y="362"/>
         <di:waypoint x="1880" y="362"/>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="edge_shape_Task_PublishCheckoutFailed_Compensated_to_shape_Gateway_Finish" bpmnElement="SF_Main_6">
+        <di:waypoint x="2110" y="362"/>
+        <di:waypoint x="2165" y="362"/>
+        <di:waypoint x="2165" y="304"/>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Throw_CompensateInventory_to_shape_Task_ReleaseInventory" bpmnElement="SF_Main_5">
-        <di:waypoint x="1563" y="352"/>
+        <di:waypoint x="1583" y="362"/>
         <di:waypoint x="1626" y="362"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Task_ValidateRequest_to_shape_Gateway_ShouldProcess" bpmnElement="SF_Main_2">
         <di:waypoint x="350" y="270"/>
-        <di:waypoint x="392" y="267"/>
+        <di:waypoint x="392" y="270"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="edge_shape_Start_CheckoutRequested_to_shape_Task_ValidateRequest" bpmnElement="SF_Main_1">
-        <di:waypoint x="90" y="260"/>
+        <di:waypoint x="110" y="270"/>
         <di:waypoint x="150" y="270"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
